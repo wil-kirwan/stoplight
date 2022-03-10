@@ -1,0 +1,108 @@
+openapi: 3.0.2
+
+info:
+  description: Remotely perform actions on your charging stations using our Station actions API. You can use this API to remotely diagnose issues and perform troubleshooting actions as needed.
+  version: 1.0.0
+  title: Station actions API
+  license:
+    name: Apache-2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: http://station-management/api/stations/v1/charging-station/
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: charging-station
+    description: Station management API
+
+paths:
+  /{stationId}:reset:
+    parameters:
+      - $ref: '#/components/parameters/stationId'
+      - $ref: '#/components/parameters/hardReset'
+    post:
+      operationId: resetStation
+      summary: Resets a charging station
+      description: Sends a reset request to the charging station. If the reset type isn't specified, a hard reset request is sent by default.
+      tags:
+        - charging-station
+      responses:
+        204:
+          description: Station reset request sent successfully
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    stationId:
+      in: path
+      name: stationId
+      description: Specifies the station using its unique identifier.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    hardReset:
+      in: query
+      name: hardReset
+      description: Defines whether the station should reset immediately (hard), or reset after the transaction is completed (soft). Set to TRUE by default.
+      required: false
+      schema:
+        type: boolean
+        default: true
+
+
+  schemas: {}
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized access
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
+
+    Forbidden:
+      description: Access is forbidden
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
+
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
+
+    ServerError:
+      description: Unexpected error
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
