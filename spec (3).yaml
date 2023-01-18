@@ -1,55 +1,52 @@
 openapi: 3.0.2
-
 info:
   description: Remotely perform actions on your charging stations using our Station actions API. You can use this API to remotely diagnose issues and perform troubleshooting actions as needed.
   version: 1.0.0
   title: Station actions API
+  contact:
+    name: Wil Kirwan
+    email: wil.kirwan@stoplight.io
+    url: https://stoplight.io
   license:
     name: Apache-2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 servers:
-  - url: http://station-management/api/stations/v1/charging-station/
-
+  - url: 'http://station-management/api/stations/v1/charging-station'
 security:
   - bearerAuth: []
-
 tags:
   - name: charging-station
     description: Station management API
-
 paths:
-  /{stationId}:reset:
+  '/{stationId}:reset':
     parameters:
       - $ref: '#/components/parameters/stationId'
       - $ref: '#/components/parameters/hardReset'
     post:
       operationId: resetStation
       summary: Resets a charging station
-      description: Sends a reset request to the charging station. If the reset type isn't specified, a hard reset request is sent by default.
+      description: 'Sends a reset request to the charging station. If the reset type isn''t specified, a hard reset request is sent by default. A hard resest will be the equivalent of a power cycle.'
       tags:
         - charging-station
       responses:
-        204:
+        '204':
           description: Station reset request sent successfully
-        400:
+        '400':
           $ref: '#/components/responses/BadRequest'
-        401:
+        '401':
           $ref: '#/components/responses/Unauthorized'
-        403:
+        '403':
           $ref: '#/components/responses/Forbidden'
-        404:
+        '404':
           $ref: '#/components/responses/NotFound'
-        500:
+        '500':
           $ref: '#/components/responses/ServerError'
-
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
   parameters:
     stationId:
       in: path
@@ -62,15 +59,12 @@ components:
     hardReset:
       in: query
       name: hardReset
-      description: Defines whether the station should reset immediately (hard), or reset after the transaction is completed (soft). Set to TRUE by default.
+      description: 'Defines whether the station should reset immediately (hard), or reset after the transaction is completed (soft). Set to TRUE by default.'
       required: false
       schema:
         type: boolean
         default: true
-
-
   schemas: {}
-
   responses:
     BadRequest:
       description: Bad request
@@ -78,28 +72,24 @@ components:
         application/json; charset=utf-8:
           schema:
             $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
-
     Unauthorized:
       description: Unauthorized access
       content:
         application/json; charset=utf-8:
           schema:
             $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
-
     Forbidden:
       description: Access is forbidden
       content:
         application/json; charset=utf-8:
           schema:
             $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
-
     NotFound:
       description: The specified resource was not found
       content:
         application/json; charset=utf-8:
           schema:
             $ref: 'https://everon-apidoc.apigee.io/files/error-definition-v1.yaml#/components/schemas/Error'
-
     ServerError:
       description: Unexpected error
       content:
